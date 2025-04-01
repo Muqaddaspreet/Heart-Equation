@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Animated Curve Plot</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div id="plot" style="width: 100%; height: 80vh"></div>
+    <script>
+      const plotDiv = document.getElementById("plot");
+      const xValues = [];
+      for (let x = -Math.sqrt(3); x <= Math.sqrt(3); x += 0.01) {
+        xValues.push(x);
+      }
+
+      let k = 0.0;
+      const kMax = 100.0;
+
+      function computeY(x, k) {
+        return (
+          Math.pow(Math.abs(x), 2 / 3) +
+          0.9 * Math.sin(k * x) * Math.sqrt(3 - x * x)
+        );
+      }
+
+      function updatePlot() {
+        const yValues = xValues.map((x) => computeY(x, k));
+
+        const trace = {
+          x: xValues,
+          y: yValues,
+          mode: "lines",
+          line: { width: 2, color: "red" },
+          name: `k = ${k.toFixed(2)}`,
+        };
+
+        const layout = {
+          title: `Plot of the equation, k = ${k.toFixed(2)}`,
+          xaxis: {
+            range: [-2, 2],
+            scaleanchor: "y",
+            scaleratio: 1,
+            tick0: -2,
+            dtick: 0.5,
+            title: "x",
+          },
+          yaxis: {
+            range: [-2, 4],
+            tick0: -2,
+            dtick: 0.5,
+            title: "y",
+          },
+        };
+
+        Plotly.newPlot(plotDiv, [trace], layout);
+
+        k += 0.01;
+        if (k <= kMax) {
+          requestAnimationFrame(updatePlot);
+        }
+      }
+
+      updatePlot();
+    </script>
+  </body>
+</html>
